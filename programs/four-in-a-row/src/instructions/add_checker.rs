@@ -9,13 +9,22 @@ pub struct AddChecker<'info> {
 }
 
 impl<'info> AddChecker<'info> {
-    pub fn process(&mut self, cul: u8) -> Result<()> {
+    pub fn process(&mut self, col: u8) -> Result<()> {
         let Self { signer, board, .. } = self;
 
-        if signer.key() == board.red.unwrap() {
-            board.add_checker(cul as usize);
+        if signer.key() == board.red.unwrap() || signer.key() == board.yellow.unwrap() {
+            board.add_checker(col as usize);
             msg!("added checker");
         }
+
+        Ok(())
+    }
+
+    pub fn constraints(&self, col: u8) -> Result<()> {
+        require!(self.board.turn().is_some(), ErrorCode::Unauthorized);
+        require!(self.board.board[0][col as usize].is_none(), ErrorCode::ColumnFull);
+        require!(col < COLS as u8, ErrorCode::InvalidColumn);
+
 
         Ok(())
     }

@@ -1,7 +1,7 @@
 use crate::*;
 
 const ROWS: usize = 6;
-const COLS: usize = 7;
+pub const COLS: usize = 7;
 const WINNING_COUNT: usize = 4;
 
 #[derive(Default)]
@@ -15,10 +15,6 @@ pub struct Board {
 
 impl Board {
     pub fn add_checker(&mut self, col: usize) {
-        assert!(col < COLS, "The column must be between 0 and 6");
-        assert!(self.board[0][col].is_none(), "The column is full");
-        assert!(self.turn().is_some(), "It's not your turn");
-
         let mut row = 0;
         for i in (0..ROWS).rev() {
             if self.board[i][col].is_none() {
@@ -88,7 +84,7 @@ impl Board {
         false
     }
 
-    fn turn(&self) -> Option<Checker> {
+    pub fn turn(&self) -> Option<Checker> {
         match self.phase {
             Phase::Turn { checker } => Some(checker),
             _ => None,
