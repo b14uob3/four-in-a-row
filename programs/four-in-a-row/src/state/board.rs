@@ -7,6 +7,7 @@ const WINNING_COUNT: usize = 4;
 #[derive(Default)]
 #[account]
 pub struct Board {
+    pub board_id: u64,
     pub board: [[Option<Checker>; COLS]; ROWS],
     pub phase: Phase,
     pub red: Pubkey,
