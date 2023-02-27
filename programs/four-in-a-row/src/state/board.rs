@@ -17,10 +17,7 @@ impl Board {
     pub fn add_checker(&mut self, col: usize) {
         assert!(col < COLS, "The column must be between 0 and 6");
         assert!(self.board[0][col].is_none(), "The column is full");
-        assert!(
-            (self.phase == Phase::TurnRed) || (self.phase == Phase::TurnYellow),
-            "Phase must be Turn"
-        );
+        assert!(self.turn().is_some(), "It's not your turn");
 
         let mut row = 0;
         for i in (0..ROWS).rev() {
@@ -36,18 +33,11 @@ impl Board {
             self.phase = Phase::Tie;
             msg!("Tie!");
         } else if self.is_winner() {
-            if self.phase == Phase::TurnRed {
-                self.phase = Phase::WonRed;
-            } else {
-                self.phase = Phase::WonYellow;
-            }
-            msg!("{} won!", self.winner().unwrap().get_checker());
+            let winner = self.turn().unwrap();
+            self.phase = Phase::Won { checker: winner };
+            msg!("{} won!", winner.to_string());
         } else {
-            if self.phase == Phase::TurnRed {
-                self.phase = Phase::TurnYellow;
-            } else {
-                self.phase = Phase::TurnRed;
-            }
+            self.phase = Phase::Turn { checker: self.turn().unwrap().flip_checker() };
         }
     }
 
@@ -100,16 +90,7 @@ impl Board {
 
     fn turn(&self) -> Option<Checker> {
         match self.phase {
-            Phase::TurnRed => Some(Checker::Red),
-            Phase::TurnYellow => Some(Checker::Yellow),
-            _ => None,
-        }
-    }
-
-    fn winner(&self) -> Option<Checker> {
-        match self.phase {
-            Phase::WonRed => Some(Checker::Red),
-            Phase::WonYellow => Some(Checker::Yellow),
+            Phase::Turn { checker } => Some(checker),
             _ => None,
         }
     }

@@ -2,16 +2,14 @@ use crate::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize, Copy, Clone, Debug, PartialEq)]
 pub enum Phase {
-    TurnRed,
-    TurnYellow,
-    WonRed,
-    WonYellow,
-    Tie,
     Waiting,
+    Tie,
+    Turn { checker: Checker},
+    Won { checker: Checker},
 }
 
 impl Default for Phase {
     fn default() -> Self {
-        Phase::TurnRed
+        Phase::Turn { checker: Checker::Red }
     }
 }

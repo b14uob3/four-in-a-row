@@ -7,14 +7,14 @@ pub enum Checker {
 }
 
 impl Checker {
-    pub fn get_opposite(&self) -> Checker {
+    pub fn flip_checker(&self) -> Checker {
         match self {
             Checker::Red => Checker::Yellow,
             Checker::Yellow => Checker::Red,
         }
     }
 
-    pub fn get_checker(&self) -> String {
+    pub fn to_string(&self) -> String {
         match self {
             Checker::Red => "Red".to_string(),
             Checker::Yellow => "Yellow".to_string(),
