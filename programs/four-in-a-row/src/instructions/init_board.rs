@@ -13,7 +13,7 @@ impl<'info> InitializeBoard<'_> {
     pub fn process(&mut self) -> Result<()> {
         let Self { signer, board, .. } = self;
 
-        board.red = Some(signer.key());
+        board.red = signer.key();
 
         Ok(())
     }
