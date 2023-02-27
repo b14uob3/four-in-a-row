@@ -4,10 +4,9 @@ const ROWS: usize = 6;
 pub const COLS: usize = 7;
 const WINNING_COUNT: usize = 4;
 
-#[derive(Default)]
 #[account]
 pub struct Board {
-    pub board_id: u64,
+    pub board_id: String,
     pub board: [[Option<Checker>; COLS]; ROWS],
     pub phase: Phase,
     pub red: Pubkey,
@@ -97,6 +96,18 @@ impl Board {
             Phase::Turn { checker: Checker::Red } => self.red,
             Phase::Turn { checker: Checker::Yellow } => self.yellow,
             _ => Pubkey::default(),
+        }
+    }
+}
+
+impl Default for Board {
+    fn default() -> Self {
+        Board {
+            board_id: String::new(),
+            board: [[None; COLS]; ROWS],
+            phase: Phase::Turn { checker: Checker::Red },
+            red: Pubkey::default(),
+            yellow: Pubkey::default(),
         }
     }
 }
