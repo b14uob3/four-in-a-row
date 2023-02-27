@@ -98,6 +98,15 @@ impl Board {
             _ => Pubkey::default(),
         }
     }
+
+    pub fn size() -> usize {
+        (4 + 32) + // game_id
+        (ROWS * COLS * 1) + // board
+        2 + // phase
+        32 + // red
+        32 + // yellow
+        16 // padding
+    }
 }
 
 impl Default for Board {
