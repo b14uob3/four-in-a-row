@@ -14,11 +14,11 @@ declare_id!("DKmcCpAshxyvZdBsABr6j7AgQ3JhL8um66MKwvugFEuA");
 mod four_in_a_row {
     use super::*;
 
-    pub fn initialize_board(ctx: Context<InitializeBoard>) -> Result<()> {
-        ctx.accounts.process()
+    pub fn initialize_board(ctx: Context<InitializeBoard>, board_id: u64) -> Result<()> {
+        ctx.accounts.process(board_id)
     }
 
-    pub fn add_checker(ctx: Context<AddChecker>, cul: u8) -> Result<()> {
-        ctx.accounts.process(cul)
+    pub fn add_checker(ctx: Context<AddChecker>, col: u8) -> Result<()> {
+        ctx.accounts.process(col)
     }
 }
