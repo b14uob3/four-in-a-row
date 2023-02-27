@@ -9,8 +9,8 @@ const WINNING_COUNT: usize = 4;
 pub struct Board {
     pub board: [[Option<Checker>; COLS]; ROWS],
     pub phase: Phase,
-    pub red: Option<Pubkey>,
-    pub yellow: Option<Pubkey>,
+    pub red: Pubkey,
+    pub yellow: Pubkey,
 }
 
 impl Board {
@@ -88,6 +88,14 @@ impl Board {
         match self.phase {
             Phase::Turn { checker } => Some(checker),
             _ => None,
+        }
+    }
+
+    pub fn turn_key(&self) -> Pubkey {
+        match self.phase {
+            Phase::Turn { checker: Checker::Red } => self.red,
+            Phase::Turn { checker: Checker::Yellow } => self.yellow,
+            _ => Pubkey::default(),
         }
     }
 }
