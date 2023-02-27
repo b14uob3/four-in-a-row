@@ -1,15 +1,22 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+mod instructions;
+mod state;
+
+pub use instructions::*;
+pub use state::*;
+
+declare_id!("DKmcCpAshxyvZdBsABr6j7AgQ3JhL8um66MKwvugFEuA");
 
 #[program]
-pub mod four_in_a_row {
+mod four_in_a_row {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        Ok(())
+    pub fn initialize_board(ctx: Context<InitializeBoard>) -> Result<()> {
+        ctx.accounts.process()
+    }
+
+    pub fn add_checker(ctx: Context<AddChecker>, cul: u8) -> Result<()> {
+        ctx.accounts.process(cul)
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}
