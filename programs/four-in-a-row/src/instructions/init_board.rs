@@ -13,6 +13,7 @@ pub struct InitializeBoard<'info> {
 impl<'info> InitializeBoard<'_> {
     pub fn process(&mut self, board_id: String) -> Result<()> {
         let Self { signer, board, .. } = self;
+        board.set_inner(Board::default());
 
         board.red = signer.key();
         board.board_id = board_id;
