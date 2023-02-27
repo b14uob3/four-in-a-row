@@ -14,7 +14,7 @@ declare_id!("DKmcCpAshxyvZdBsABr6j7AgQ3JhL8um66MKwvugFEuA");
 mod four_in_a_row {
     use super::*;
 
-    pub fn initialize_board(ctx: Context<InitializeBoard>, board_id: u64) -> Result<()> {
+    pub fn initialize_board(ctx: Context<InitializeBoard>, board_id: String) -> Result<()> {
         ctx.accounts.process(board_id)
     }
 
