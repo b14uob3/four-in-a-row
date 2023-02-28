@@ -10,6 +10,6 @@ pub enum Phase {
 
 impl Default for Phase {
     fn default() -> Self {
-        Phase::Turn { checker: Checker::Red }
+        Phase::Waiting
     }
 }
