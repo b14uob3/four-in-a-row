@@ -23,7 +23,7 @@ impl<'info> AddChecker<'info> {
 
     pub fn constraints(&self, col: u8) -> Result<()> {
         require!(self.board.turn().is_some(), ErrorCode::Unauthorized);
-        // require!(self.board.turn_key() == self.signer.key(), ErrorCode::Unauthorized);
+        require!(self.board.turn_key() == self.signer.key(), ErrorCode::Unauthorized);
         require!(self.board.board[0][col as usize].is_none(), ErrorCode::ColumnFull);
         require!(col < COLS as u8, ErrorCode::InvalidColumn);
 
