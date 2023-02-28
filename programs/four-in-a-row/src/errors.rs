@@ -8,4 +8,6 @@ pub enum ErrorCode {
     InvalidColumn,
     #[msg("The column is full")]
     ColumnFull,
+    #[msg("The board is full")]
+    InvalidPhase,
 }

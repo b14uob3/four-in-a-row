@@ -114,7 +114,7 @@ impl Default for Board {
         Board {
             board_id: String::new(),
             board: [[None; COLS]; ROWS],
-            phase: Phase::Turn { checker: Checker::Red },
+            phase: Phase::Waiting,
             red: Pubkey::default(),
             yellow: Pubkey::default(),
         }
