@@ -23,6 +23,7 @@ impl<'info> AddPlayer<'info> {
 
     pub fn constraints(&self) -> Result<()> {
         require!(self.board.phase == Phase::Waiting, ErrorCode::InvalidPhase);
+        require!(self.board.red != self.signer.key(), ErrorCode::Unauthorized);
 
         Ok(())
     }
