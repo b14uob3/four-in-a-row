@@ -21,4 +21,8 @@ mod four_in_a_row {
     pub fn add_checker(ctx: Context<AddChecker>, col: u8) -> Result<()> {
         ctx.accounts.process(col)
     }
+
+    pub fn add_player(ctx: Context<AddPlayer>) -> Result<()> {
+        ctx.accounts.process()
+    }
 }
