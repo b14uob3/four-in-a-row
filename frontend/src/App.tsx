@@ -1,14 +1,28 @@
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { ConnectionProvider, useWallet, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { clusterApiUrl } from '@solana/web3.js';
-import type { FC, ReactNode } from 'react';
-import React, { useMemo } from 'react';
+import React, { FC, ReactNode, useState, useMemo } from 'react';
+
+import Status from './components/Status';
+import Board, { TBoard } from './components/Board';
+import Init from './components/Init';
+
+const ROW = 6;
+const COL = 7;
 
 const App: FC = () => {
+    const [board, setBoard] = useState<TBoard>(Array(ROW).fill(Array(COL).fill(null)));
+    const [boardId, setBoardId] = useState<string | null>(null);
+    const [status, setStatus] = useState<string>("hi :)");
+    const [address, setAddress] = useState<string | null>(null);
+
     return (
         <Context>
             <Connect />
+            <Status status={status} />
+            <Board board={board} />
+            <Init boardId={boardId} setBoardId={setBoardId} />
         </Context>
     );
 };
