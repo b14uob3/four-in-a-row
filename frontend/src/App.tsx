@@ -1,15 +1,14 @@
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import type { FC, ReactNode } from 'react';
 import React, { useMemo } from 'react';
 
-export const App: FC = () => {
+const App: FC = () => {
     return (
         <Context>
-            <Content />
+            <Connect />
         </Context>
     );
 };
@@ -36,6 +35,12 @@ const Context: FC<{ children: ReactNode }> = ({ children }) => {
     );
 };
 
-const Content: FC = () => {
-    return <WalletMultiButton />;
+const Connect: FC = () => {
+    return (
+        <div className="absolute top-4 right-4">
+            <WalletMultiButton className="h-9 rounded-md border border-gray-300 bg-white py-1.5 px-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"/>
+        </div>
+    );
 };
+
+export default App;
