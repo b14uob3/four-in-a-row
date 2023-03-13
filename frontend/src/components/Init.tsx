@@ -1,10 +1,10 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { Program, AnchorProvider, Idl, Wallet } from "@project-serum/anchor";
 import idl from "../idl.json";
 
-const Init = ({boardId, setBoardId} : {boardId: string | null, setBoardId: React.Dispatch<React.SetStateAction<string | null>>}) => {
+const Init = ({boardId, setBoardId, setStatus, setBoard} : {boardId: string | null, setBoardId: React.Dispatch<React.SetStateAction<string | null>>, setStatus: React.Dispatch<React.SetStateAction<string>>, setBoard: React.Dispatch<React.SetStateAction<(string | null)[][]>>}) => {
     const [join, setJoin] = useState<boolean>(false);
     const inputBoardId = useRef<HTMLInputElement>(null);
     const wallet = useWallet();
@@ -14,19 +14,82 @@ const Init = ({boardId, setBoardId} : {boardId: string | null, setBoardId: React
     const provider = new AnchorProvider(connection, (wallet as unknown) as Wallet, { preflightCommitment: "processed" });
     const program = new Program(idl as Idl, programId, provider);
 
-    const createBoard = async () => {
+    useEffect(() => {
+        if (boardId === null) return;
+        connection.onAccountChange(new PublicKey(boardId), (account) => {
+            const board = program.coder.accounts.decode("Board", account.data);
+            console.log(board);
+
+            const newBoard = board.board.map((row: any) => row.map((cell: any) => {
+                if (cell === null) 
+                    return null;
+                else 
+                    return cell.red === undefined ? "yellow" : "red";
+            }));
+            setBoard(newBoard);
+
+            if (board.phase.waiting !== undefined)
+                setStatus(`Waiting for another player to join... (invite code: ${board.boardId})`);
+            else if (board.phase.turn !== undefined) {
+                if (board.phase.turn.red !== undefined && board.red === wallet.publicKey!)
+                    setStatus("Your turn!");
+                else
+                    setStatus("Waiting for opponent's turn...");
+            } else if (board.phase.winner !== undefined) {
+                if (board.phase.winner.red !== undefined && board.red === wallet.publicKey!)
+                    setStatus("You won!");
+                else
+                    setStatus("You lost!");
+            } else if (board.phase.tie !== undefined)
+                setStatus("Tie!");
+        });
+        return () => { };
+    }, [boardId]);
         
+
+    const createBoard = async () => {
+        const inviteCode = (Math.random() + 1).toString(36).substring(5);
+        const [boardId, _] = PublicKey.findProgramAddressSync([Buffer.from("board"), wallet.publicKey!.toBuffer(), Buffer.from(inviteCode)], programId);
+        setBoardId(boardId.toString());
+
+        const tx = await program.methods
+            .initializeBoard(inviteCode)
+            .accounts({
+                board: boardId,
+                signer: wallet.publicKey!,
+            })
+            .transaction();
+        
+        const latestBlockhash = await connection.getLatestBlockhash();
+        tx.recentBlockhash = latestBlockhash.blockhash;
+        tx.feePayer = wallet.publicKey!;
+        
+        const signedTx = await wallet.signTransaction!(tx);
+        const txid = await connection.sendRawTransaction(signedTx.serialize());
     };
 
     const joinBoard = async () => {
         const value = inputBoardId.current?.value;
         if (value === undefined) return;
-        const boards = await program.account.board.all();
-        console.log(boards);
-        
+        const boards = await program.account.board.all();        
         const board = boards.find((board) => board.account.boardId === value);
         if (board === undefined) return;
         setBoardId(board.publicKey.toString());
+
+        const tx = await program.methods
+            .addPlayer()
+            .accounts({
+                board: board.publicKey,
+                signer: wallet.publicKey!,
+            })
+            .transaction();
+        
+        const latestBlockhash = await connection.getLatestBlockhash();
+        tx.recentBlockhash = latestBlockhash.blockhash;
+        tx.feePayer = wallet.publicKey!;
+
+        const signedTx = await wallet.signTransaction!(tx);
+        const txid = await connection.sendRawTransaction(signedTx.serialize());
     };
 
     return (
