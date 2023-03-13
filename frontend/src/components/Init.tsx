@@ -1,18 +1,32 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import React, { useRef, useState } from "react";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { Program, AnchorProvider, Idl, Wallet } from "@project-serum/anchor";
+import idl from "../idl.json";
 
 const Init = ({boardId, setBoardId} : {boardId: string | null, setBoardId: React.Dispatch<React.SetStateAction<string | null>>}) => {
     const [join, setJoin] = useState<boolean>(false);
     const inputBoardId = useRef<HTMLInputElement>(null);
     const wallet = useWallet();
 
-    const createBoard = () => {
+    const connection = new Connection("https://api.devnet.solana.com", "processed");
+    const programId = new PublicKey("8M4pLE5ir2ec6uf1bw5ydMyhgb6PZTxw1jyx8tHV5iat");
+    const provider = new AnchorProvider(connection, (wallet as unknown) as Wallet, { preflightCommitment: "processed" });
+    const program = new Program(idl as Idl, programId, provider);
+
+    const createBoard = async () => {
+        
     };
 
-    const joinBoard = () => {
+    const joinBoard = async () => {
         const value = inputBoardId.current?.value;
         if (value === undefined) return;
-        setBoardId(value);
+        const boards = await program.account.board.all();
+        console.log(boards);
+        
+        const board = boards.find((board) => board.account.boardId === value);
+        if (board === undefined) return;
+        setBoardId(board.publicKey.toString());
     };
 
     return (

@@ -1,0 +1,189 @@
+{
+    "version": "0.1.0",
+    "name": "four_in_a_row",
+    "instructions": [
+        {
+            "name": "initializeBoard",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "board",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "boardId",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "addChecker",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "board",
+                    "isMut": true,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "col",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "addPlayer",
+            "accounts": [
+                {
+                    "name": "signer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "board",
+                    "isMut": true,
+                    "isSigner": false
+                }
+            ],
+            "args": []
+        }
+    ],
+    "accounts": [
+        {
+            "name": "Board",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "boardId",
+                        "type": "string"
+                    },
+                    {
+                        "name": "board",
+                        "type": {
+                            "array": [
+                                {
+                                    "array": [
+                                        {
+                                            "option": {
+                                                "defined": "Checker"
+                                            }
+                                        },
+                                        7
+                                    ]
+                                },
+                                6
+                            ]
+                        }
+                    },
+                    {
+                        "name": "phase",
+                        "type": {
+                            "defined": "Phase"
+                        }
+                    },
+                    {
+                        "name": "red",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "yellow",
+                        "type": "publicKey"
+                    }
+                ]
+            }
+        }
+    ],
+    "types": [
+        {
+            "name": "Checker",
+            "type": {
+                "kind": "enum",
+                "variants": [
+                    {
+                        "name": "Red"
+                    },
+                    {
+                        "name": "Yellow"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Phase",
+            "type": {
+                "kind": "enum",
+                "variants": [
+                    {
+                        "name": "Waiting"
+                    },
+                    {
+                        "name": "Tie"
+                    },
+                    {
+                        "name": "Turn",
+                        "fields": [
+                            {
+                                "name": "checker",
+                                "type": {
+                                    "defined": "Checker"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Won",
+                        "fields": [
+                            {
+                                "name": "checker",
+                                "type": {
+                                    "defined": "Checker"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "errors": [
+        {
+            "code": 6000,
+            "name": "Unauthorized",
+            "msg": "You are not authorized to perform this action."
+        },
+        {
+            "code": 6001,
+            "name": "InvalidColumn",
+            "msg": "The column must be between 0 and 6"
+        },
+        {
+            "code": 6002,
+            "name": "ColumnFull",
+            "msg": "The column is full"
+        },
+        {
+            "code": 6003,
+            "name": "InvalidPhase",
+            "msg": "The board is full"
+        }
+    ]
+}
